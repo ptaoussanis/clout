@@ -30,7 +30,7 @@
   ([path]
      (path-decode path "UTF-8"))
   ([path encoding]
-     (-> (string/replace path "+" (URLEncoder/encode "+" encoding))
+     (-> (string/replace (str path) "+" (URLEncoder/encode "+" encoding))
          (URLDecoder/decode encoding))))
 
 (def ^:private uri-chars
