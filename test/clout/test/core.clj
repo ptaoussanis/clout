@@ -85,12 +85,33 @@
                         (request :get "/foo/bar"))
          {:id "bar"})))
 
-(deftest url-paths
+(deftest absolute-paths
   (is (route-matches "http://localhost/" (request :get "http://localhost/")))
   (is (route-matches "//localhost/"      (request :get "http://localhost/")))
-  (is (route-matches "//localhost/"      (request :get "https://localhost/"))))
+  (is (route-matches "//localhost/"      (request :get "https://localhost/")))
 
-(deftest url-port-paths
+  (let [route "//?localhost/"] ; Optional subdomain(s), any scheme
+    (is (route-matches route      (request :get "http://localhost/")))
+    (is (route-matches route      (request :get "http://www.localhost/")))
+    (is (route-matches route      (request :get "http://foo.bar.localhost/")))
+    (is (not (route-matches route (request :get "http://foobarlocalhost/"))))
+    (is (route-matches route      (request :get "https://foo.bar.localhost/"))))
+  (let [route "//www?localhost/"] ; Optional www subdomain, any scheme
+    (is (route-matches route      (request :get "http://localhost/")))
+    (is (route-matches route      (request :get "http://www.localhost/")))
+    (is (not (route-matches route (request :get "http://wwwlocalhost/"))))
+    (is (route-matches route      (request :get "https://www.localhost/")))
+    (is (not (route-matches route (request :get "http://foo.bar.localhost/")))))
+  (let [route "http://www?localhost/"] ; Optional www subdomain, http
+    (is (route-matches route      (request :get "http://localhost/")))
+    (is (route-matches route      (request :get "http://www.localhost/")))
+    (is (not (route-matches route (request :get "https://www.localhost/")))))
+
+  (is (= (route-matches "//?example.com/:foo/:bar/"
+                        (request :get "http://subdomain.example.com/baz/qux/"))
+         {:foo "baz" :bar "qux"})))
+
+(deftest absolute-port-paths
   (let [req (request :get "http://localhost:8080/")]
     (is (route-matches "http://localhost:8080/" req))
     (is (not (route-matches "http://localhost:7070/" req)))))

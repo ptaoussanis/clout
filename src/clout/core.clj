@@ -135,6 +135,20 @@
   [path]
   (boolean (re-matches #"(https?:)?//.*" path)))
 
+(defn- abs-prefix-lex-fn
+  "Lex fn for absolute url prefixes. Returns regex string to support
+  scheme-relative and/or optional subdomain matching."
+  [^Matcher matcher]
+  (str
+   (if-let [explicit-scheme (.group matcher 1)]
+     (str explicit-scheme "//")
+     "https?://")
+   (when-let [subdoms-qualifier (.group matcher 2)]
+     (case subdoms-qualifier
+       "?"    "(?:.+\\.)?"  ; Optional subdomain(s)
+       "www?" "(?:www\\.)?" ; Optional www subdomain
+       nil))))
+
 (defn route-compile
   "Compile a path string using the routes syntax into a uri-matcher struct."
   ([path]
@@ -143,6 +157,7 @@
     (let [splat   #"\*"
           word    #":([\p{L}_][\p{L}_0-9-]*)"
           literal #"(:[^\p{L}_*]|[^:*/])+"
+          abs-prefix     #"^(https?:)?//(www\?|\?)?"
           trailing-slash #"/\?$"
           word-group #(keyword (.group ^Matcher % 1))
           word-regex #(regexs (word-group %) "[^/,;?]+")]
@@ -151,7 +166,7 @@
           (apply str
             (lex path
               splat   "(.*?)"
-              #"^//"  "https?://"
+              abs-prefix     abs-prefix-lex-fn
               trailing-slash "/?"
               #"/"    "/"
               word    #(str "(" (word-regex %) ")")
@@ -159,10 +174,10 @@
         (remove nil?
           (lex path
             splat   :*
+            abs-prefix     nil
             trailing-slash nil
-            word    word-group
-            #"^//"  nil
             #"/"    nil
+            word    word-group
             literal nil))
         (absolute-url? path)))))
 
