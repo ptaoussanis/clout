@@ -70,21 +70,9 @@
          {:id "bar"})))
 
 (deftest url-paths
-  (is (route-matches
-        "http://localhost/"
-        {:scheme  :http
-         :headers {"host" "localhost"}
-         :uri     "/"}))
-  (is (route-matches
-       "//localhost/"
-       {:scheme  :http
-        :headers {"host" "localhost"}
-        :uri     "/"}))
-  (is (route-matches
-       "//localhost/"
-       {:scheme  :https
-        :headers {"host" "localhost"}
-        :uri     "/"})))
+  (is (route-matches "http://localhost/" (request :get "http://localhost/")))
+  (is (route-matches "//localhost/"      (request :get "http://localhost/")))
+  (is (route-matches "//localhost/"      (request :get "https://localhost/"))))
 
 (deftest url-port-paths
   (let [req (request :get "http://localhost:8080/")]
