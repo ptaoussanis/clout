@@ -107,3 +107,11 @@
     (is (not (route-matches route (request :get "/foo/bar"))))
     (is (not (route-matches route (request :get "/foo/1x"))))
     (is (route-matches route (request :get "/foo/10")))))
+
+(deftest optional-trailing-slash
+  (let [route "/foo/bar/?"]
+    (is (route-matches route (request :get "/foo/bar/")))
+    (is (route-matches route (request :get "/foo/bar"))))
+  (let [route "/foo/:bar/?"]
+    (is (= (route-matches route (request :get "/foo/baz/")) {:bar "baz"}))
+    (is (= (route-matches route (request :get "/foo/baz"))  {:bar "baz"}))))
