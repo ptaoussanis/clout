@@ -142,7 +142,7 @@
   ([path regexs]
     (let [splat   #"\*"
           word    #":([\p{L}_][\p{L}_0-9-]*)"
-          literal #"(:[^\p{L}_*]|[^:*])+"
+          literal #"(:[^\p{L}_*]|[^:*/])+"
           word-group #(keyword (.group ^Matcher % 1))
           word-regex #(regexs (word-group %) "[^/,;?]+")]
       (CompiledRoute. path
@@ -151,12 +151,15 @@
             (lex path
               splat   "(.*?)"
               #"^//"  "https?://"
+              #"/"    "/"
               word    #(str "(" (word-regex %) ")")
               literal #(re-escape (.group ^Matcher %)))))
         (remove nil?
           (lex path
             splat   :*
             word    word-group
+            #"^//"  nil
+            #"/"    nil
             literal nil))
         (absolute-url? path)))))
 
