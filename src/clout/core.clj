@@ -124,6 +124,7 @@
     (let [splat   #"\*"
           word    #":([\p{L}_][\p{L}_0-9-]*)"
           literal #"(:[^\p{L}_*]|[^:*/])+"
+          trailing-slash #"/\?$"
           word-group #(keyword (.group ^Matcher % 1))
           word-regex #(regexs (word-group %) "[^/,;?]+")]
       (CompiledRoute.
@@ -132,12 +133,14 @@
             (lex path
               splat   "(.*?)"
               #"^//"  "https?://"
+              trailing-slash "/?"
               #"/"    "/"
               word    #(str "(" (word-regex %) ")")
               literal #(re-escape (.group ^Matcher %)))))
         (remove nil?
           (lex path
             splat   :*
+            trailing-slash nil
             word    word-group
             #"^//"  nil
             #"/"    nil
