@@ -42,15 +42,15 @@ And scheme-relative routes:
                           (request :get "https://subdomain.example.com/"))
     {}
 
-A `?` qualifier can be used in the following special cases:
-
-  "http://?example.com/"    or "//?example.com/"    ; Matches optional subdomain(s)
-  "http://www?example.com/" or "//www?example.com/" ; Matches optional www subdomain
-  "/foo/bar/?" ; Matches optional trailing slash
-
 Clout supports both keywords and wildcards. Keywords (like ":title") will
 match any character but the following: `/ . , ; ?`. Wildcards (*) will match
 anything.
+
+A `?` qualifier can be used in the following special cases:
+
+    "http://?example.com/"    or "//?example.com/"    ; Matches optional subdomain(s)
+    "http://www?example.com/" or "//www?example.com/" ; Matches optional www subdomain
+    "/foo/bar/?" ; Matches optional trailing slash
 
 If a route does not match, nil is returned:
 
