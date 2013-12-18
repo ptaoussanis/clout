@@ -73,7 +73,7 @@
     "If the route matches the supplied request, the matched keywords are
     returned as a map. Otherwise, nil is returned."))
 
-(defrecord CompiledRoute [re keys absolute?]
+(defrecord CompiledRoute [path re keys absolute?]
   Route
   (route-matches [route request]
     (let [path-info (if absolute?
@@ -126,7 +126,7 @@
           literal #"(:[^\p{L}_*]|[^:*])+"
           word-group #(keyword (.group ^Matcher % 1))
           word-regex #(regexs (word-group %) "[^/,;?]+")]
-      (CompiledRoute.
+      (CompiledRoute. path
         (re-pattern
           (apply str
             (lex path
