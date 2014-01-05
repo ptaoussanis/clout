@@ -3,3 +3,5 @@ lib
 clout*.jar
 pom.xml
 .lein-failures
+/target
+/.repl
