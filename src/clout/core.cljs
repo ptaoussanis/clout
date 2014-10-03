@@ -69,7 +69,9 @@
       (if-let [matches (re-matches re path-info)]
         (assoc-keys-with-groups
           (map path-decode (rest matches))
-          keys)))))
+          keys))))
+
+  Object (toString [_] path))
 
 ;; Compile routes
 

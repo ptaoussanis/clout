@@ -102,7 +102,9 @@
       (if (.matches matcher)
         (assoc-keys-with-groups
           (map path-decode (re-groups* matcher))
-          keys)))))
+          keys))))
+
+  Object (toString [_] path))
 
 ;; Compile routes
 
