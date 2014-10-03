@@ -1,4 +1,4 @@
-(defproject com.taoensso.forks/clout "1.2.0"
+(defproject com.taoensso.forks/clout "2.0.0"
   :author "Peter Taoussanis <https://www.taoensso.com>"
   :description "Cross-platform fork of https://github.com/weavejester/clout"
   :url "https://github.com/ptaoussanis/clout"
